@@ -5,9 +5,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="theme-color" content="#111a18" />
 		<meta name="description" content="Painel de leituras ambientais da estação ESP32 com sensores DHT22, BMP280, LDR e MQ-135." />
-		<meta name="api-base" content="/api" />
+		<meta name="api-base" content="https://esp32-8uic.onrender.com/api" />
 		<meta name="station-id" content="1" />
-		<meta name="data-mode" content="mock" />
+		<meta name="data-mode" content="live" />
 		<title>Estação | Monitoramento meteorológico</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,12 +30,12 @@
 				</a>
 
 				<div class="topbar-center">
-					<span class="live-indicator" id="telemetry-indicator"><span></span> DADOS FICTÍCIOS · DEMO</span>
+					<span class="live-indicator" id="telemetry-indicator"><span></span> CONECTANDO À API...</span>
 					<span class="topbar-divider" aria-hidden="true"></span>
-						<span class="topbar-date" id="topbar-date">ESTAÇÃO 01 · ESP32</span>
+					<span class="topbar-date" id="topbar-date">ESTAÇÃO 01 · ESP32</span>
 				</div>
 
-					<div class="topbar-station"><i data-lucide="radio" aria-hidden="true"></i><span id="connection-label">Modo demonstração</span></div>
+				<div class="topbar-station"><i data-lucide="radio" aria-hidden="true"></i><span id="connection-label">Conectando...</span></div>
 			</header>
 
 			<main id="inicio" class="dashboard">
@@ -68,7 +68,7 @@
 									<p id="location-region">ESP32 · aguardando API</p>
 								</div>
 							</div>
-								<span class="station-tag" id="station-state"><span></span> AGUARDANDO API</span>
+							<span class="station-tag" id="station-state"><span></span> AGUARDANDO API</span>
 						</div>
 
 						<div class="current-main">
@@ -85,7 +85,7 @@
 						</div>
 
 						<div class="current-footer">
-							<div class="sun-times"><span><i data-lucide="cpu" aria-hidden="true"></i><span>Aquisição <strong>ESP32</strong></span></span><span><i data-lucide="database" aria-hidden="true"></i><span>Origem <strong id="station-origin">Dados fictícios</strong></span></span></div>
+							<div class="sun-times"><span><i data-lucide="cpu" aria-hidden="true"></i><span>Aquisição <strong>ESP32</strong></span></span><span><i data-lucide="database" aria-hidden="true"></i><span>Origem <strong id="station-origin">API Python</strong></span></span></div>
 							<span class="coordinates" id="coordinates">--° / --°</span>
 						</div>
 					</article>
@@ -108,7 +108,7 @@
 							<p class="metric-note">Leitura analógica · LDR</p>
 						</article>
 						<article class="metric-card panel metric-gas">
-								<div class="metric-heading"><span class="metric-icon"><i data-lucide="flask-conical" aria-hidden="true"></i></span><span class="metric-label">Qualidade do ar</span></div>
+							<div class="metric-heading"><span class="metric-icon"><i data-lucide="flask-conical" aria-hidden="true"></i></span><span class="metric-label">Qualidade do ar</span></div>
 							<div class="metric-value"><span id="gas-reading">--</span><sup id="gas-unit">ADC</sup></div>
 							<p class="metric-note" id="gas-note">Resposta analógica · MQ-135</p>
 						</article>
@@ -119,7 +119,7 @@
 					<article class="chart-panel panel">
 						<div class="section-heading chart-heading">
 							<div>
-								<p class="eyebrow" id="history-kicker">SÉRIE DE DEMONSTRAÇÃO</p>
+								<p class="eyebrow" id="history-kicker">SÉRIE HISTÓRICA</p>
 								<h2>Histórico de medições</h2>
 							</div>
 							<div class="chart-controls">
