@@ -1,8 +1,33 @@
-# Dashboard da Estação Meteorológica
+# Dashboard da Estação Meteorológica (ESP32)
 
-Projeto de painel web responsivo para acompanhar uma estação meteorológica baseada em ESP32. A interface apresenta temperatura e umidade do DHT22, pressão atmosférica do BMP280, luminosidade do LDR e qualidade relativa do ar pelo MQ-135. No momento, o dashboard usa dados fictícios de demonstração enquanto a API do backend não está disponível.
+Painel web responsivo para monitoramento ambiental em tempo real de uma estação meteorológica baseada no microcontrolador **ESP32**. A aplicação consome dados telemétricos validados de uma API REST em Python hospedada no Render e apresenta leituras atuais, estatísticas do período, gráficos históricos interativos e georreferenciamento.
 
-## Estrutura de pastas
+## Sensores e Grandezas Monitoradas
+
+| Sensor | Grandeza | Unidade | Descrição |
+| :--- | :--- | :---: | :--- |
+| **DHT22** | Temperatura do ar | `°C` | Medição térmica digital do ambiente |
+| **DHT22** | Umidade relativa | `%` | Percentual de umidade com barra de nível visual |
+| **BMP280** | Pressão atmosférica | `hPa` | Leitura barométrica via barramento I2C |
+| **LDR** | Luz ambiente | `ADC` | Resposta analógica da luminosidade incidente |
+| **MQ-135** | Qualidade do ar | `ADC` | Indicador relativo da concentração de gases |
+
+## Funcionalidades
+
+- **Telemetria em Tempo Real:** Atualização automática a cada 60 segundos e botão para atualização sob demanda.
+- **Gráficos Históricos Interativos:** Visualização temporal via *Chart.js* com alternância dinâmica entre os 5 parâmetros dos sensores e períodos (`24 h`, `7 dias` e `30 dias`).
+- **Resumo Estatístico:** Cálculo automático de leituras válidas, média, mínima e máxima para o sensor e período selecionados.
+- **Integridade dos Dados:** Contabilização e filtragem de registros inválidos ou descartados pela camada de validação da API.
+- **Georreferenciamento:** Renderização dinâmica de mapa interativo (*OpenStreetMap*) quando as coordenadas da estação são fornecidas pelo backend.
+- **Modo Offline / Demonstração:** Suporte nativo a dados simulados (`mock`) para testes locais sem dependência de conexão com o servidor.
+
+## Tecnologias Utilizadas
+
+- **Frontend:** HTML5, CSS3 (Grid/Flexbox responsivo) e JavaScript (ES6+ modular)
+- **Visualização e Ícones:** [Chart.js](https://www.chartjs.org/) e [Lucide Icons](https://lucide.dev/)
+- **Hardware:** Microcontrolador ESP32 + sensores DHT22, BMP280, LDR e MQ-135
+
+## Estrutura de Pastas
 
 ```text
 dashboard-estacao-meteorologica/
@@ -19,14 +44,3 @@ dashboard-estacao-meteorologica/
 └── assets/
     ├── icons/
     └── images/
-```
-
-## O que há em cada pasta
-
-- `css/`: arquivos de estilo visual e responsividade da interface. Atualmente contém `style.css`.
-- `js/`: códigos JavaScript que controlam a página, os dados exibidos e os gráficos. `app.js` inicia o dashboard, `dashboard.js` atualiza os componentes, `charts.js` monta os gráficos, `api.js` prepara a comunicação com o backend e `mock-data.js` fornece dados fictícios para demonstração.
-- `assets/`: reúne recursos visuais usados pelo projeto.
-- `assets/icons/`: ícones próprios que podem ser usados na interface.
-- `assets/images/`: imagens e ilustrações usadas pelo dashboard.
-
-Na raiz, `index.html` define a estrutura da página e `README.md` descreve o projeto e sua organização.
