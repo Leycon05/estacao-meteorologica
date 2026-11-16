@@ -51,13 +51,11 @@
 		byId('map-frame').querySelector('iframe')?.remove();
 		if (!hasCoordinates) return;
 
-		const span = 0.012;
-		const bounds = [longitude - span, latitude - span, longitude + span, latitude + span].join('%2C');
 		const iframe = document.createElement('iframe');
-		iframe.title = `Mapa da estação ${station.nome || station.name || station.id || 'meteorológica'}`;
+		iframe.title = `Mapa de satélite da estação ${station.nome || station.name || station.id || 'meteorológica'}`;
 		iframe.loading = 'lazy';
 		iframe.referrerPolicy = 'no-referrer-when-downgrade';
-		iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bounds}&layer=mapnik&marker=${latitude}%2C${longitude}`;
+		iframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&t=h&z=17&output=embed`;
 		byId('map-frame').append(iframe);
 	};
 
