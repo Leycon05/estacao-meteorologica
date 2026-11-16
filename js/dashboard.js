@@ -10,23 +10,32 @@
 	let dashboardData;
 	let selectedMetric = 'temperatura';
 
-	const formatNumber = (value, digits = 1) => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value))
-		? new Intl.NumberFormat('pt-BR', { maximumFractionDigits: digits }).format(Number(value))
-		: '--';
+	const formatNumber = (value, digits = 1) =>
+		value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value))
+			? new Intl.NumberFormat('pt-BR', { maximumFractionDigits: digits }).format(Number(value))
+			: '--';
+
 	const formatTimestamp = (value) => {
 		if (!value) return '--';
 		const date = new Date(value);
-		return Number.isNaN(date.getTime()) ? '--' : new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(date);
+		return Number.isNaN(date.getTime())
+			? '--'
+			: new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(date);
 	};
-	const hasCoordinateValues = (latitude, longitude) => latitude !== null && latitude !== undefined && latitude !== ''
+
+	const hasCoordinateValues = (latitude, longitude) =>
+		latitude !== null && latitude !== undefined && latitude !== ''
 		&& longitude !== null && longitude !== undefined && longitude !== ''
 		&& Number.isFinite(Number(latitude)) && Number.isFinite(Number(longitude));
-	const coordinateText = (latitude, longitude) => hasCoordinateValues(latitude, longitude)
-		? `${Number(latitude).toFixed(5)}°, ${Number(longitude).toFixed(5)}°`
-		: 'Coordenadas indisponíveis';
 
-	const validReadings = (readings) => (readings || []).filter((reading) =>
-		reading.valida !== false && reading.valido !== false && reading.valid !== false);
+	const coordinateText = (latitude, longitude) =>
+		hasCoordinateValues(latitude, longitude)
+			? `${Number(latitude).toFixed(5)}°, ${Number(longitude).toFixed(5)}°`
+			: 'Coordenadas indisponíveis';
+
+	const validReadings = (readings) =>
+		(readings || []).filter((reading) =>
+			reading.valida !== false && reading.valido !== false && reading.valid !== false);
 
 	const updateMap = (station) => {
 		const latitude = Number(station.latitude);
@@ -34,6 +43,7 @@
 		const hasCoordinates = hasCoordinateValues(station.latitude, station.longitude)
 			&& Number.isFinite(latitude) && Number.isFinite(longitude)
 			&& Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180;
+
 		byId('map-coordinates').textContent = hasCoordinates ? coordinateText(latitude, longitude) : 'Coordenadas indisponíveis';
 		byId('coordinates').textContent = hasCoordinates ? coordinateText(latitude, longitude) : 'Localização não informada';
 		byId('footer-coordinates').innerHTML = `${station.id || 'ESTAÇÃO 01'} <span>·</span> ${hasCoordinates ? coordinateText(latitude, longitude) : 'LOCALIZAÇÃO NÃO INFORMADA'}`;
@@ -60,11 +70,12 @@
 			: latestCandidate;
 		const units = dashboard.unidades || {};
 		const stationName = station.nome || station.name || `Estação ${station.id || '01'}`;
+		const isDemo = dashboard.modo === 'demonstracao';
 
 		byId('location-name').textContent = stationName;
 		byId('location-region').textContent = station.localizacao || station.municipio || station.city || 'Estação meteorológica ESP32';
 		byId('station-id').textContent = station.id ?? '01';
-		byId('station-origin').textContent = dashboard.modo === 'demonstracao' ? 'Dados fictícios' : 'ESP32';
+		byId('station-origin').textContent = isDemo ? 'Dados fictícios' : 'ESP32';
 		byId('current-temperature').textContent = formatNumber(latest.temperatura);
 		byId('reading-time').textContent = formatTimestamp(latest.timestamp);
 		byId('humidity').textContent = formatNumber(latest.umidade);
@@ -81,7 +92,7 @@
 		byId('updated-at').textContent = `Leitura: ${formatTimestamp(latest.timestamp)}`;
 		byId('last-update').textContent = formatTimestamp(latest.timestamp);
 		byId('topbar-date').textContent = `ESTAÇÃO ${station.id || '01'} · ESP32`;
-		const isDemo = dashboard.modo === 'demonstracao';
+
 		byId('history-kicker').textContent = isDemo ? 'SÉRIE FICTÍCIA · DEMONSTRAÇÃO' : 'DADOS VALIDADOS DA ESTAÇÃO';
 		byId('connection-label').textContent = isDemo ? 'Modo demonstração' : 'API conectada';
 		byId('telemetry-indicator').classList.toggle('is-live', !isDemo);
@@ -95,6 +106,7 @@
 			: 'O histórico é exibido sem leituras marcadas como inválidas pela API.';
 		byId('valid-count').textContent = formatNumber(dashboard.resumo?.leituras_validas ?? readings.length, 0);
 		byId('rejected-count').textContent = formatNumber(dashboard.resumo?.leituras_rejeitadas ?? dashboard.leituras_rejeitadas ?? 0, 0);
+
 		updateMap(station);
 		document.title = `${stationName} | Estação meteorológica`;
 	};
@@ -103,8 +115,13 @@
 		const details = metricDetails[selectedMetric];
 		const unit = dashboardData.unidades?.[selectedMetric] || details.unit;
 		const readings = validReadings(dashboardData.historico || dashboardData.leituras || dashboardData.history);
-		const values = readings.map((reading) => reading[selectedMetric]).filter((value) => value !== null && value !== undefined && value !== '').map(Number).filter(Number.isFinite);
+		const values = readings
+			.map((reading) => reading[selectedMetric])
+			.filter((value) => value !== null && value !== undefined && value !== '')
+			.map(Number)
+			.filter(Number.isFinite);
 		const average = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+
 		byId('valid-count').textContent = formatNumber(dashboardData.resumo?.leituras_validas ?? readings.length, 0);
 		byId('period-average').textContent = `${formatNumber(average, details.digits)} ${unit}`;
 		byId('period-min').textContent = `${formatNumber(values.length ? Math.min(...values) : null, details.digits)} ${unit}`;
@@ -112,7 +129,10 @@
 		byId('chart-summary-value').textContent = values.length ? `${formatNumber(values.at(-1), details.digits)} ${unit}` : '--';
 		byId('chart-summary-label').textContent = `${details.label} · valor mais recente no período`;
 		byId('chart-unit').textContent = unit;
-		if (window.WeatherCharts) window.WeatherCharts.setData(readings, selectedMetric, dashboardData.unidades || {});
+
+		if (window.WeatherCharts) {
+			window.WeatherCharts.setData(readings, selectedMetric, dashboardData.unidades || {});
+		}
 	};
 
 	const showNotice = (message) => {
